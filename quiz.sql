@@ -11,44 +11,19 @@ values ("aishu","aisha"),
        
        
 delimiter //
-create procedure showallusers()
+create procedure ShowAllUsers()
 begin 
 select *from users;
 end //
 delimiter ;
 
-call showallusers ();
-
--- update users
--- set username= "aaisha"
--- where user_id= 1;
-
--- update users
--- set username = "fathima"
--- where user_id = 2;
-
--- update users 
--- set username = "yaasmin"
--- where user_id = 3;
-
--- update users
--- set email = case
--- 	when user_id = 1 then "aaisha@gmail.com"
--- 	when user_id = 2 then "fathima@gmail.com"
--- 	when user_id = 3 then "yaasmim@gmail.com"
--- end
--- where user_id in (1,2,3);
-
--- update users 
--- set email = "yaasmin@gmail.com"
--- where user_id = 3;
-
+call ShowAllUsers ();
 
 -- 2.
 create table quiz (quiz_id int auto_increment primary key,quiz_title varchar(100), total_questions int);
 
 delimiter //
-create procedure addquiz(
+create procedure AddQuiz(
     in p_quiz_title varchar(100),
 	in p_total_questions int
 )
@@ -58,10 +33,9 @@ begin
 end //
 delimiter ;
 
-
-call addquiz("python",2);
-call addquiz ("html",3);
-call addquiz ("css",2);
+call AddQuiz("python",2);
+call AddQuiz ("html",3);
+call AddQuiz ("css",2);
 
 select *from quiz;
 
@@ -78,7 +52,7 @@ values (1,"Which keyword is used to define a function in Python?"),
 	   (3,"Which unit is relative to the parent element?");
 
 delimiter //
-create procedure count_questions(
+create procedure CountQuestions(
                  in p_quiz_id int
 )
 begin
@@ -88,7 +62,7 @@ where quiz_id =p_quiz_id;
 end //
 delimiter ;
 
-call count_questions(3);
+call CountQuestions(1);
 
 select *from questions;
 
@@ -96,50 +70,101 @@ select *from questions;
 create table user_answers(answer_id int auto_increment primary key,user_id int,question_id int,selected_option_id int);
 create table options (option_id int auto_increment primary key,question_id int,option_text varchar (255),is_correct boolean);
 
-insert into user_answers(user_id,question_id,selected_option_id)
-values(1,1,2),
-	  (1,2,3),
-	  (1,3,2),
-	  (1,4,3),
-	  (1,5,3),
-	  (1,6,3),
-	  (1,7,3),
+insert into options(question_id, option_text, is_correct)
+values
+(1, "function", FALSE),
+(1, "def", TRUE),
+(1, "fun", FALSE),
+(1, "define", FALSE),
 
-insert into options(question_id,option_text,is_correct)
-values(1,"function","False"),
-	  (1,"def","False"),
-	  (1,"fun","False"),
-	  (1,"define","False"),
-      (2,"",""),
-      (2,"",""),
-      (2,"",""),
-      (2,"",""),
-      (3,"",""),
-      (3,"",""),
-      (3,"",""),
-      (3,"",""),
-      (4,"",""),
-      (4,"",""),
-      (4,"",""),
-      (4,"",""),
-      (5,"",""),
-      (5,"",""),
-      (5,"",""),
-      (5,"",""),
-      (6,"",""),
-      (6,"",""),
-      (6,"",""),
-      (6,"",""),
-      (7,"",""),
-      (7,"",""),
-      (7,"",""),
-      (7,"",""),
+(2, "4", FALSE),
+(2, "6", FALSE),
+(2, "5", TRUE),
+(2, "7", FALSE),
 
-select *from user_answers;
+(3, "image", FALSE),
+(3, "img", TRUE),
+(3, "pic", FALSE),
+(3, "src", FALSE),
+
+(4, "link", FALSE),
+(4, "src", FALSE),
+(4, "href", TRUE),
+(4, "goto", FALSE),
+
+(5, "break", FALSE),
+(5, "lb", FALSE),
+(5, "br", TRUE),
+(5, "hr", FALSE),
+
+(6, "#", FALSE),
+(6, "@", FALSE),
+(6, ".", TRUE),
+(6, "*", FALSE),
+
+(7, "px", FALSE),
+(7, "cm", FALSE),
+(7, "em", TRUE),
+(7, "inch", FALSE);
+
+insert into user_answers(user_id, question_id, selected_option_id)
+values
+(1, 1, 2), 
+(1, 2, 7), 
+(1, 3, 10), 
+(1, 4, 12), 
+(1, 5, 15), 
+(1, 6, 16), 
+(1, 7, 17), 
+
+(2, 1, 2),
+(2, 2, 7),
+(2, 3, 10),
+(2, 4, 12),
+(2, 5, 14),
+(2, 6, 18),
+(2, 7, 20),
+
+(3, 1, 2),
+(3, 2, 7),
+(3, 3, 10),
+(3, 4, 14),
+(3, 5, 14),
+(3, 6, 18),
+(3, 7, 27);
+
+delimiter //
+create procedure CalculateUserScore()
+begin
+    SELECT u.username, COUNT(*) AS total_correct
+    FROM user_answers ua
+    JOIN options o
+      ON ua.selected_option_id = o.option_id
+    JOIN users u
+      ON ua.user_id = u.user_id
+    WHERE o.is_correct = TRUE
+    GROUP BY u.user_id, u.username;
+end //
+delimiter ;
 
 select *from options;
-show tables ;
-select *from questions
+select *from user_answers;
+
+call CalculateUserScore();
+
+-- drop table quiz;
+-- drop table options;
+-- drop table user_answers;
+-- drop table users;
+-- drop table questions;
+
+-- drop procedure CalculateUserScore;
+-- drop procedure ShowAllUsers;
+-- drop procedure AddQuiz;
+-- drop procedure CountQuestions;
+
+-- 5.
+create procedure TopPerformers
 
 
 
