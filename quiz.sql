@@ -258,8 +258,33 @@ set sql_safe_updates = 0;
 delete from questions
 where question_id = 5;
 
-select *from questions
+select *from questions;
+select *from options;
+ 
+-- 10.
+create table deleted_users(user_id int,username varchar(50),email varchar(100),deleted_on timestamp default current_timestamp) 
 
+delimiter //
+create trigger after_user_delete
 
+after delete on users
+for each row 
 
+begin 
+insert into deleted_users (user_id,username,email)
+values (old.user_id,old.username,old.email);
+
+end //
+delimiter ;
+
+delete from users
+where user_id = 3;
+
+insert into users (username, email) values('testuser', 'test@example.com');
+select * from users;
+
+delete from users 
+where username = 'testuser';
+
+select *from deleted_users;
 
