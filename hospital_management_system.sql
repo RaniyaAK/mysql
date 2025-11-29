@@ -69,8 +69,25 @@ select *from patients
 where city = "Delhi";
 
 -- 5.
-select (name,status)from patients
-where 
+select p.first_name,p.last_name,a.status 
+from appointments a
+join patients p on a.patient_id = p.patient_id;
+
+-- 6.
+select name,phone from doctors;
+
+-- 7.
+select *from patients
+where age > 30;
+
+-- 8.
+select  appointment_date from appointments;
+
+-- 9.
+select room_type from room;
+
+-- 10.
+select department_name from departments;
 
 
 drop table appointments
