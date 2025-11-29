@@ -89,6 +89,56 @@ select room_type from room;
 -- 10.
 select department_name from departments;
 
+-- where and logical operators.:-
+-- 1.
+select *from patients 
+where gender = "male";
+
+-- 2.
+select *from patients
+where age < 50 and age > 25;
+-- where age between 25 and 50;
+
+-- 3.
+select *from doctors 
+where specialization = "Cardiologist";
+
+-- 4.
+select *from appointments
+where status = "Scheduled";
+
+-- 5.
+select *from patients
+where city != "Chennai";
+
+-- Order by.:-
+-- 1.
+select *from patients
+order by first_name ;
+
+-- 2.
+select *from doctors
+order by specialization;
+
+-- 3.
+select *from room
+order by price_per_day desc;
+
+-- 4.
+select *from appointments 
+order by appointment_date;
+
+-- 5.
+select *from patients
+order by age ;
+
+-- Aggregate Functions.:-
+-- 1.
+select count(*) from patients;
+
+-- 2.
+
+
 
 drop table appointments
 
