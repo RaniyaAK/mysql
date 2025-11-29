@@ -137,6 +137,46 @@ order by age ;
 select count(*) from patients;
 
 -- 2.
+select count(*) from patients
+where gender = "female";
+
+select count(*) from patients
+where gender = "male";
+
+-- 3.
+select max(price_per_day) from room;
+ 
+-- 4.
+select min(age) from patients;
+
+-- 5.
+select avg(price_per_day)from room;
+
+-- Group by:-
+-- 1.
+select specialization,count(*)from doctors
+group by specialization;
+
+-- 2.
+select city, count(*)as total_patients from patients
+group by city;
+
+-- 3.
+select status,count(*) from appointments
+group by status;
+
+-- 4.
+select price_per_day ,count(*)from room
+group by price_per_day;
+
+-- 5.
+select specialization,count(*)from doctors
+group by specialization;
+
+-- Join Queries:-
+-- 1.
+
+
 
 
 
