@@ -337,8 +337,8 @@ JOIN appointments a ON d.doctor_id = a.doctor_id
 GROUP BY d.doctor_id, d.name;
 
 -- 3.List unique room types available.
-SELECT DISTINCT room_type
-FROM room;
+select distinct room_type
+from room;
 
 -- 4.Find number of appointments per status for each doctor.
 SELECT 
