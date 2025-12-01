@@ -189,38 +189,180 @@ select
 FROM appointments a
 JOIN doctors d ON a.doctor_id = d.doctor_id;
 
--- 3.
-select 
-    p.city as patient_city,
-    d.doctor as doctor_name
+-- 3.Show patient city along with assigned doctor.
+SELECT p.city,
+       d.name AS doctor_name
+FROM Appointments a
+JOIN Patients p ON a.patient_id = p.patient_id
+JOIN Doctors d ON a.doctor_id = d.doctor_id;
+
+
+-- 4.List all doctors with department names.
+SELECT d.name AS doctor_name,
+       dept.department_name
+FROM doctors d
+JOIN departments dept
+     ON LEFT(d.specialization, 4) = LEFT(dept.department_name, 4)
+     OR (d.specialization = 'Surgeon' AND dept.department_name = 'General Surgery');
+
+-- 5.Display appointment status along with patient full name.
+SELECT CONCAT(p.first_name, ' ', p.last_name) AS full_name,
+       a.status
+FROM appointments a
+JOIN patients p
+     ON a.patient_id = p.patient_id;
+     
+     
+-- Advanced join:-
+-- 1.Show only completed appointments with doctor & patient name.
+SELECT 
+    CONCAT(p.first_name, ' ', p.last_name) AS patient_name,
+    d.name AS doctor_name,
+    a.status
+FROM appointments a
+JOIN patients p ON a.patient_id = p.patient_id
+JOIN doctors d ON a.doctor_id = d.doctor_id
+WHERE a.status = 'Completed';
+
+-- 2.List department names with doctors working in them.
+
+
+-- 3.Show all cancelled appointments with patient details.
+SELECT 
+    a.appointment_id,
+    CONCAT(p.first_name, ' ', p.last_name) AS patient_name,
+    p.age,
+    p.gender,
+    p.city,
+    a.appointment_date,
+    a.status
+FROM appointments a
+JOIN patients p
+    ON a.patient_id = p.patient_id
+WHERE a.status = 'Cancelled';
+
+-- 4.Show appointments for patients older than 35 years.
+SELECT 
+    a.appointment_id,
+    CONCAT(p.first_name, ' ', p.last_name) AS patient_name,
+    p.age,
+    p.gender,
+    p.city,
+    a.appointment_date,
+    a.status,
+    d.name AS doctor_name
+FROM appointments a
+JOIN patients p ON a.patient_id = p.patient_id
+JOIN doctors d ON a.doctor_id = d.doctor_id
+WHERE p.age > 35;
+
+-- 5.Retrieve doctor phone number for each appointment.
+SELECT 
+    a.appointment_id,
+    CONCAT(p.first_name, ' ', p.last_name) AS patient_name,
+    a.appointment_date,
+    a.status,
+    d.name AS doctor_name,
+    d.phone AS doctor_phone
+FROM appointments a
+JOIN doctors d ON a.doctor_id = d.doctor_id
+JOIN patients p ON a.patient_id = p.patient_id;
+
+-- Subqueries:-
+-- 1.Find patient(s) assigned to cardiologist.
+SELECT 
+    CONCAT(p.first_name, ' ', p.last_name) AS patient_name,
+    p.age,
+    p.gender,
+    p.city,
+    d.name AS doctor_name,
+    d.specialization,
+    a.appointment_date,
+    a.status
+FROM appointments a
+JOIN patients p ON a.patient_id = p.patient_id
+JOIN doctors d ON a.doctor_id = d.doctor_id
+WHERE d.specialization = 'Cardiologist';
+
+-- 2.Retrieve doctor details having scheduled appointments.
+SELECT DISTINCT 
+    d.doctor_id,
+    d.name AS doctor_name,
+    d.specialization,
+    d.phone
+FROM doctors d
+JOIN appointments a ON d.doctor_id = a.doctor_id
+WHERE a.status = 'Scheduled';
+
+-- 3.Show room type with the maximum price.
+SELECT room_type, price_per_day
+FROM room
+WHERE price_per_day = (SELECT MAX(price_per_day) FROM room);
+
+-- 4.Count doctors in the department with highest staff.
+SELECT department_name, COUNT(*) AS doctor_count
+FROM (
+    SELECT 
+        d.name AS doctor_name,
+        CASE
+            WHEN d.specialization = 'Cardiologist' THEN 'Cardiology'
+            WHEN d.specialization = 'Neurologist'  THEN 'Neurology'
+            WHEN d.specialization = 'Orthopedic'   THEN 'Orthopedics'
+            WHEN d.specialization = 'Pediatrician' THEN 'Pediatrics'
+            WHEN d.specialization = 'Surgeon'      THEN 'General Surgery'
+        END AS department_name
+    FROM doctors d
+) AS dept_doctors
+GROUP BY department_name
+ORDER BY doctor_count DESC
+LIMIT 1;
+
+-- Mixed Concept Questions:-
+-- 1.Display patient name, age, doctor name & appointment date.
+SELECT 
+    CONCAT(p.first_name, ' ', p.last_name) AS patient_name,
+    p.age,
+    d.name AS doctor_name,
+    a.appointment_date
 FROM appointments a
 JOIN patients p ON a.patient_id = p.patient_id
 JOIN doctors d ON a.doctor_id = d.doctor_id;
 
--- 4.
--- List all doctors with department names.
-select d.department as department_name ,
-       d.name as doctor
-
+-- 2.Show total appointments done by each doctor (JOIN + GROUP BY).
 SELECT 
     d.name AS doctor_name,
-    dept.department_name
+    COUNT(a.appointment_id) AS total_appointments
 FROM doctors d
-JOIN departments dept 
-    ON d.specialization = dept.department_name;
+JOIN appointments a ON d.doctor_id = a.doctor_id
+GROUP BY d.doctor_id, d.name;
 
-SELECT d.name AS doctor_name, dept.department_name
+-- 3.List unique room types available.
+SELECT DISTINCT room_type
+FROM room;
+
+-- 4.Find number of appointments per status for each doctor.
+SELECT 
+    d.name AS doctor_name,
+    a.status,
+    COUNT(a.appointment_id) AS total_appointments
 FROM doctors d
-JOIN departments dept ON d.department_id = dept.department_id;
-
--- 5.
-
+JOIN appointments a ON d.doctor_id = a.doctor_id
+GROUP BY d.doctor_id, d.name, a.status;
 
 
+-- 5.Display department-wise doctor count ordered by count desc.
+SELECT 
+    CASE
+        WHEN d.specialization = 'Cardiologist' THEN 'Cardiology'
+        WHEN d.specialization = 'Neurologist'  THEN 'Neurology'
+        WHEN d.specialization = 'Orthopedic'   THEN 'Orthopedics'
+        WHEN d.specialization = 'Pediatrician' THEN 'Pediatrics'
+        WHEN d.specialization = 'Surgeon'      THEN 'General Surgery'
+    END AS department_name,
+    COUNT(*) AS doctor_count
+FROM doctors d
+GROUP BY department_name
+ORDER BY doctor_count DESC;
 
 
-
-
-
-drop table appointments
 
