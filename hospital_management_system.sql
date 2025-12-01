@@ -175,6 +175,48 @@ group by specialization;
 
 -- Join Queries:-
 -- 1.
+SELECT 
+    CONCAT(p.first_name, ' ', p.last_name) AS patient_name,
+    d.name AS doctor_name
+FROM appointments a
+JOIN patients p ON a.patient_id = p.patient_id
+JOIN doctors d ON a.doctor_id = d.doctor_id;
+
+-- 2.
+select 
+    a.appointment_date,
+    d.specialization
+FROM appointments a
+JOIN doctors d ON a.doctor_id = d.doctor_id;
+
+-- 3.
+select 
+    p.city as patient_city,
+    d.doctor as doctor_name
+FROM appointments a
+JOIN patients p ON a.patient_id = p.patient_id
+JOIN doctors d ON a.doctor_id = d.doctor_id;
+
+-- 4.
+-- List all doctors with department names.
+select d.department as department_name ,
+       d.name as doctor
+
+SELECT 
+    d.name AS doctor_name,
+    dept.department_name
+FROM doctors d
+JOIN departments dept 
+    ON d.specialization = dept.department_name;
+
+SELECT d.name AS doctor_name, dept.department_name
+FROM doctors d
+JOIN departments dept ON d.department_id = dept.department_id;
+
+-- 5.
+
+
+
 
 
 
